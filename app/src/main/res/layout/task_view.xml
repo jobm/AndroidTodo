@@ -4,7 +4,6 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,8 +15,7 @@
         android:textSize="20dp"
         android:layout_toLeftOf="@+id/doneButton"
         android:layout_alignBottom="@+id/doneButton"
-        android:gravity="center_vertical" />
-
+        android:gravity="center_vertical"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -25,5 +23,6 @@
         android:id="@+id/doneButton"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:onClick="onDoneButtonClick" />
 </RelativeLayout>
