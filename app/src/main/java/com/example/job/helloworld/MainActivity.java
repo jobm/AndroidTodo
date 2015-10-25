@@ -22,23 +22,12 @@ import com.example.job.helloworld.db.TaskDBHelper;
 public class MainActivity extends ListActivity {
     private ListAdapter listAdapter;
     private TaskDBHelper helper;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        SQLiteDatabase sqlDB = new TaskDBHelper(this).getWritableDatabase();
-        Cursor cursor = sqlDB.query(TaskContract.TABLE,
-                new String[]{TaskContract.Columns.TASK},
-                null,null,null,null,null);
-
-        cursor.moveToFirst();
-        while(cursor.moveToNext()) {
-            Log.d("MainActivity cursor",
-                    cursor.getString(
-                            cursor.getColumnIndexOrThrow(
-                                    TaskContract.Columns.TASK)));
-        }
+        updateUI();
     }
 
     @Override
@@ -61,14 +50,14 @@ public class MainActivity extends ListActivity {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 String task = inputField.getText().toString();
-                                Log.d("MainActivity",task);
+                                Log.d("MainActivity", task);
 
                                 helper = new TaskDBHelper(MainActivity.this);
                                 SQLiteDatabase db = helper.getWritableDatabase();
                                 ContentValues values = new ContentValues();
 
                                 values.clear();
-                                values.put(TaskContract.Columns.TASK,task);
+                                values.put(TaskContract.Columns.TASK, task);
 
                                 db.insertWithOnConflict(TaskContract.TABLE, null, values,
                                         SQLiteDatabase.CONFLICT_IGNORE);
@@ -76,7 +65,7 @@ public class MainActivity extends ListActivity {
                             }
                         });
 
-                builder.setNegativeButton("Cancel",null);
+                builder.setNegativeButton("Cancel", null);
 
                 builder.create().show();
                 return true;
@@ -106,4 +95,22 @@ public class MainActivity extends ListActivity {
         this.setListAdapter(listAdapter);
     }
 
+    public void onDoneButtonClick(View view) {
+        View v = (View) view.getParent();
+        TextView taskTextView = (TextView) v.findViewById(R.id.taskTextView);
+        String task = taskTextView.getText().toString();
+
+        String sql = String.format("DELETE FROM %s WHERE %s = '%s'",
+                TaskContract.TABLE,
+                TaskContract.Columns.TASK,
+                task);
+
+
+        helper = new TaskDBHelper(MainActivity.this);
+        SQLiteDatabase sqlDB = helper.getWritableDatabase();
+        sqlDB.execSQL(sql);
+        updateUI();
+
+
+    }
 }
