@@ -1,9 +1,5 @@
 package com.example.job.helloworld;
 
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.ContentValues;
@@ -11,7 +7,7 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,7 +15,7 @@ import android.widget.*;
 import com.example.job.helloworld.db.TaskContract;
 import com.example.job.helloworld.db.TaskDBHelper;
 
-public class MainActivity extends ListActivity {
+public class MainActivity extends AppCompatActivity {
     private ListAdapter listAdapter;
     private TaskDBHelper helper;
 
@@ -32,7 +28,7 @@ public class MainActivity extends ListActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu);
+        getMenuInflater().inflate(R.menu.menu,menu);
         return true;
     }
 
@@ -45,27 +41,24 @@ public class MainActivity extends ListActivity {
                 builder.setMessage("What do you want to do?");
                 final EditText inputField = new EditText(this);
                 builder.setView(inputField);
-                builder.setPositiveButton("Add",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                String task = inputField.getText().toString();
-                                Log.d("MainActivity", task);
+                builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String task = inputField.getText().toString();
 
-                                helper = new TaskDBHelper(MainActivity.this);
-                                SQLiteDatabase db = helper.getWritableDatabase();
-                                ContentValues values = new ContentValues();
+                        helper = new TaskDBHelper(MainActivity.this);
+                        SQLiteDatabase db = helper.getWritableDatabase();
+                        ContentValues values = new ContentValues();
 
-                                values.clear();
-                                values.put(TaskContract.Columns.TASK, task);
+                        values.clear();
+                        values.put(TaskContract.Columns.TASK, task);
 
-                                db.insertWithOnConflict(TaskContract.TABLE, null, values,
-                                        SQLiteDatabase.CONFLICT_IGNORE);
+                        db.insertWithOnConflict(TaskContract.TABLE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+                        updateUI();
+                    }
+                });
 
-                            }
-                        });
-
-                builder.setNegativeButton("Cancel", null);
+                builder.setNegativeButton("Cancel",null);
 
                 builder.create().show();
                 return true;
@@ -74,7 +67,6 @@ public class MainActivity extends ListActivity {
                 return false;
         }
     }
-
 
     private void updateUI() {
         helper = new TaskDBHelper(MainActivity.this);
@@ -91,8 +83,8 @@ public class MainActivity extends ListActivity {
                 new int[]{R.id.taskTextView},
                 0
         );
-
-        this.setListAdapter(listAdapter);
+        ListView listView = (ListView) findViewById(R.id.list);
+        listView.setAdapter(listAdapter);
     }
 
     public void onDoneButtonClick(View view) {
@@ -110,7 +102,5 @@ public class MainActivity extends ListActivity {
         SQLiteDatabase sqlDB = helper.getWritableDatabase();
         sqlDB.execSQL(sql);
         updateUI();
-
-
     }
 }
